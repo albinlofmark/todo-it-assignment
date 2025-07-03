@@ -1,5 +1,7 @@
 package se.lofmark;
 
+import java.time.LocalDate;
+
 public class Person {
 
     private int id;
@@ -8,7 +10,7 @@ public class Person {
     private String email;
 
     public Person(int id, String firstName, String lastName, String email) {
-        setId(id);
+        this.id = id;
         setFirstName(firstName);
         setLastName(lastName);
         setEmail(email);
@@ -34,17 +36,7 @@ public class Person {
 
     // Setters
 
-    public void setId(int id) {
-
-        if (id > 0) {
-            this.id = id;
-        } else {
-            throw new IllegalArgumentException("ID cannot be negative, 0 or empty");
-        }
-    }
-
     public void setFirstName(String firstName) {
-
         if (firstName == null || firstName.trim().isEmpty()) {
             throw new IllegalArgumentException("First name cannot be null or empty");
         }
@@ -70,12 +62,10 @@ public class Person {
         StringBuilder summary = new StringBuilder();
 
         summary.append("Person Info -> ID: ").append(id)
-                .append(", First name: ").append(firstName)
-                .append(", Last name: ").append(lastName)
+                .append(", Name: ").append(firstName)
+                .append(" ").append(lastName)
                 .append(", Email: ").append(email);
 
         return summary.toString();
     }
-
-
 }
