@@ -1,66 +1,83 @@
 package se.lofmark;
 
+import se.lofmark.idSeqencer.TodoItemIdSequencer;
+
 import java.time.LocalDate;
 
 public class TodoItem {
 
     private int id;
-    String title;
-    String taskDescription;
-    LocalDate deadLine;
-    boolean done;
-    Person creator;
+    private String title;
+    private String taskDescription;
+    private LocalDate deadLine;
+    private boolean done = false;
+    private Person creator;
 
-    public TodoItem(int id, String title, String taskDescription, LocalDate deadLine, boolean done, Person creator) {
-        this.id = id;
+    public TodoItem(String title, String taskDescription, LocalDate deadLine, Person creator){
+
+        this.id = TodoItemIdSequencer.getInstance().nextId();
         setTitle(title);
         setTaskDescription(taskDescription);
         setDeadLine(deadLine);
-        setDone(done);
         setCreator(creator);
+
+
     }
 
     // Getters
 
-    public int getId() {
-        return id;
-    }
 
-    public String getTitle() {
+    public String getTitle(){
         return title;
     }
 
-    public String getTaskDescription() {
+    public String getTaskDescription(){
         return taskDescription;
     }
 
-    public LocalDate getDeadline() {
+    public LocalDate getDeadLine() {
         return deadLine;
+    }
+
+    public boolean isDone() {
+        return done;
     }
 
     public Person getCreator() {
         return creator;
     }
 
-    // Setters
+    //Setters
+
 
     public void setTitle(String title) {
-        if (title == null || title.trim().isEmpty()) {
-            throw new IllegalArgumentException("Title cannot be null or empty:");
+
+        if (title == null || title.trim().isEmpty()){
+            throw new IllegalArgumentException("Title cannot be null or empty");
         }
         this.title = title;
     }
 
     public void setTaskDescription(String taskDescription) {
+
+        if (taskDescription == null || taskDescription.trim().isEmpty()) {
+            throw new IllegalArgumentException("Title cannot be null or empty");
+        }
+
         this.taskDescription = taskDescription;
     }
 
     public void setDeadLine(LocalDate deadLine) {
-        if (deadLine == null || deadLine.isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("Deadline cannot be null or empty:");
-        } else {
-            this.deadLine = deadLine;
+
+        if (deadLine == null){
+            throw new IllegalArgumentException("Date cannot be left empty");
         }
+
+        if (deadLine.isBefore(LocalDate.now())){
+            throw new IllegalArgumentException("The task is overdue");
+        }
+
+        this.deadLine = deadLine;
     }
 
     public void setDone(boolean done) {
@@ -68,39 +85,58 @@ public class TodoItem {
     }
 
     public void setCreator(Person creator) {
+        if (creator == null ){
+            throw new IllegalArgumentException("Creator cannot be null");
+        }
+
         this.creator = creator;
     }
 
-    public String getSummary() {
+    public boolean isOverdue() {
+        return deadLine.isBefore(LocalDate.now());
+    }
 
-        StringBuilder summary = new StringBuilder();
+    public String getOverdueInfo(){
 
-        summary.append("Todo Item Info -> ID: ").append(id)
-                .append(", Title: ").append(title)
+        StringBuilder info = new StringBuilder();
+        info.append("Job: ").append(title)
+                .append(", Id number: ").append(id)
+                .append(" Overdue: ").append(done ? "Yes" : "No");
+
+        return info.toString();
+    }
+
+    @Override
+    public String toString(){
+
+        StringBuilder info = new StringBuilder();
+        info.append("Task Information -  ID: ").append(id)
+                .append(", Task: ").append(title)
                 .append(", Task description: ").append(taskDescription)
                 .append(", Deadline: ").append(deadLine)
-                .append(", Done: ").append(done)
-                .append(", Creator: ").append(creator.getSummary());
+                .append(", Done: ").append(done ? "Yes" : "No")
+                .append(", Assigned to: ").append(creator.getFirstName());
 
-        return summary.toString();
+
+        return info.toString();
     }
 
-    public boolean isOverdue() {
-        if (LocalDate.now().isAfter(deadLine)) {
-            return true;
-        } else {
-            return false;
-        }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        TodoItem todoItem = (TodoItem) obj;
+
+        return id == todoItem.id;
     }
 
-    public boolean isDone() {
-        if (done) {
-            return true;
-        } else {
-            return false;
-        }
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(id);
     }
 
-
-
+    public int getId (){
+        return id;
+    }
 }
